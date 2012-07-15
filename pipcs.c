@@ -1,9 +1,9 @@
-// nfree.c - nfree (1)
+// pipcs.c - pipcs
 // ipcs-like breakdown of POSIX and System V shared memory
 //
 // This program is licensed under the GNU Library General Public License, v2
 //
-// Zach Walton (waltonz1@nationwide.com)
+// Zach Walton (zacwalt@gmail.com)
 
 // exposes nftw()
 #define _XOPEN_SOURCE 500
@@ -32,7 +32,7 @@
 #define S(X) ( ((unsigned long long)(X) << 10) >> shift)
 
 const char help_message[] =
-"usage: nfree [-b|-k|-m|-g] [-s]\n"
+"usage: pipcs [-b|-k|-m|-g] [-s]\n"
 "  default: show all\n"
 "  -b,-k,-m,-g show output in bytes, KB, MB, or GB\n"
 "  -s show shared memory breakdown\n"
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
 	int no_opt = 0;
 	int shift = 10;
 	char base = 'K';
-	while( (opt = getopt(argc, argv, "bkmgslv:u:") ) != -1 )
+	while( (opt = getopt(argc, argv, "bkmgs") ) != -1 )
 	switch(opt) {
 	    case 's': show_shared = 1; break;
             case 'b': shift = 0;  base=0x0;  break;

@@ -1,0 +1,46 @@
+Overview:
+
+pipcs gives an "ipcs -u"-level overview of POSIX and System V shared memory.  For now, it shows page count/residency as well as totals.  Eventually I'll add information regarding POSIX semaphores and message queues.
+
+A few notes:
+
+1) These totals are calculated by calling mincore() on every file in /dev/shm and any other tmpfs filesystems.  That means that you need to have read access to those files (though it will throw a warning if you don't).  I suggest running this as root.
+
+2) There's a discrepancy between (sysv_swp_pages + sysv_tot_pages) and sysv_shm_total.  sysv_shm_total comes straight from the shmctl() call, so I don't know why this discrepancy is there.
+
+3) System V shared memory doesn't alter the "used" column of "free" output until it's actually written to.  The POSIX behavior is more peculiar; when you open a shared memory segment with shm_open() followed by ftruncate(size) and then run pipcs, you'll see that mincore() reports the address range of the new segment as entirely in swap.  That means that if you see, say, 1G of POSIX pages in swap from pipcs output and no swap acutally in use, that memory has been allocated but not written to.
+
+4) pipcs reports whether or not System V shared memory segments are locked.  This data is not available from the kernel for POSIX shared memory segments.
+
+Usage:
+
+~> ./pipcs -h
+./pipcs: invalid option -- 'h'
+usage: pipcs [-b|-k|-m|-g] [-s]
+  default: show all
+  -b,-k,-m,-g show output in bytes, KB, MB, or GB
+  -s show shared memory breakdown
+
+Example output:
+~> ./pipcs -sm
+
+------ SYS V Shared Memory ------
+sysv_swp_pages: 102859
+sysv_swp_total: 401M
+sysv_res_pages: 1210948
+sysv_res_total: 4730M
+sysv_lck_pages: 0
+sysv_lck_total: 0M
+sysv_shm_total: 7856M
+
+------ POSIX Shared Memory ------
+posix_swp_pages: 27003
+posix_swp_total: 105M
+posix_res_pages: 57554
+posix_res_total: 224M
+posix_shm_total: 330M
+
+------ Total Shared Memory ------
+total_swp_pages: 129862
+total_res_pages: 1268502
+shm_total:       8187M
