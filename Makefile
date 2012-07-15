@@ -4,7 +4,7 @@ LDFLAGS=-lrt
 
 all: pipcs
 
-nfree: pipcs.c
+pipcs: pipcs.c
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 clean:
