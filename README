@@ -6,9 +6,9 @@ A few notes:
 
 1) These totals are calculated by calling mincore() on every file in /dev/shm and any other tmpfs filesystems.  That means that you need to have read access to those files (though it will throw a warning if you don't).  I suggest running this as root.
 
-2) There's a discrepancy between (sysv_swp_pages + sysv_tot_pages) and sysv_shm_total.  sysv_shm_total comes straight from the shmctl() call, so I don't know why this discrepancy is there.
+2) There's a discrepancy between (sysv_swp_pages + sysv_res_pages) and sysv_shm_total.  sysv_shm_total comes straight from the shmctl() call, so I don't know why this discrepancy is there.
 
-3) System V shared memory doesn't alter the "used" column of "free" output until it's actually written to.  The POSIX behavior is more peculiar; when you open a shared memory segment with shm_open() followed by ftruncate(size) and then run pipcs, you'll see that mincore() reports the address range of the new segment as entirely in swap.  That means that if you see, say, 1G of POSIX pages in swap from pipcs output and no swap acutally in use, that memory has been allocated but not written to.
+3) System V shared memory doesn't increase the size of the cache until it's actually written to.  The POSIX behavior is more peculiar; when you open a shared memory segment with shm_open() followed by ftruncate(size) and then run pipcs, you'll see that mincore() reports the address range of the new segment as entirely in swap.  That means that if you see, say, 1G of POSIX pages in swap from pipcs output and no swap actually in use, that memory has been allocated but not written to.
 
 4) pipcs reports whether or not System V shared memory segments are locked.  This data is not available from the kernel for POSIX shared memory segments.
 
